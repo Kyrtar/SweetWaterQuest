@@ -18,13 +18,18 @@
     var player = {
         pos: {x:95, y:100},
         class: 1,
+        hp: 5,
         status: "idle",
         frame: 0,
         attacking: false,
         attackFrame: 0,
-        dir: "right"
+        dir: "right",
+        attackAnim: false,
+        attackRot: 0
     }
     var animate = true;
+
+    var enemyFrame = 0;
     
     const MOVE_SPEED = 0.75;
 
@@ -60,9 +65,10 @@
     }
 
     let enemies = [
-        new MeleeEnemy("skeleton", 3, 0, 1000, 50, 20),
-        new MeleeEnemy("skeleton", 3, 0, 1000, 150, 50),
-        new MeleeEnemy("skeleton", 3, 0, 1000, 100, 100)
+        new MeleeEnemy("skeleton", 3, 0.25, 1000, 50, 20),
+        new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 50),
+        new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 100),
+        new MeleeEnemy("skeleton", 3, 0.25, 1000, 100, 100)
     ]
 
     function load(){
@@ -107,6 +113,71 @@
         }
         
     }
+
+    /*
+    //Draw map con zoom, siguiendo al jugador
+    //No funciona, no se usa.
+    function drawMap(map){
+
+        let startTileX = 0;
+        let startTileY = 0;
+
+        let endTileX = map[0].length;
+        let endTileY = map.length;
+
+        if(!map.hostile){
+            startTileX = Math.floor(player.pos.x/10) - 5;
+            startTileY = Math.floor(player.pos.y/10) - 2;
+            
+            if(startTileX < 0){
+                startTileX = 0;
+            }
+            if(startTileY < 0){
+                startTileY = 0;
+            }
+            endTileX = startTileX + 11;
+            endTileY = startTileY + 7;
+        }
+        
+
+        let drawX = 0;
+        let drawY = 0;
+
+
+        for(let y = startTileY; y < endTileY; y++){
+            for(let x = startTileX; x < endTileX; x++){
+
+                switch(map[y][x]){
+                    case 1: ctx.drawImage(villageIMG, 0*tileIMGres, 0*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 2: ctx.drawImage(villageIMG, 10*tileIMGres, 2*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 3: ctx.drawImage(villageIMG, 2*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 4: ctx.drawImage(villageIMG, 3*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 5: ctx.drawImage(villageIMG, 0*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 6: ctx.drawImage(villageIMG, 2*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    
+                    case 11: ctx.drawImage(villageIMG, 1*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 12: ctx.drawImage(villageIMG, 0*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 13: ctx.drawImage(villageIMG, 0*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 14: ctx.drawImage(villageIMG, 5*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 15: ctx.drawImage(villageIMG, 5*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+
+                    case 21: ctx.drawImage(villageIMG, 10*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 22: ctx.drawImage(villageIMG, 11*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 23: ctx.drawImage(villageIMG, 12*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 24: ctx.drawImage(villageIMG, 10*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 25: ctx.drawImage(villageIMG, 11*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 26: ctx.drawImage(villageIMG, 12*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 27: ctx.drawImage(villageIMG, 10*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 28: ctx.drawImage(villageIMG, 11*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                    case 29: ctx.drawImage(villageIMG, 12*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
+                }
+                drawX++;
+            }
+            drawX=0;
+            drawY++;
+        }
+        
+    }*/
 
     //1 = up, 2 = right, 3 = down, 4 = left
     function checkCol(dir){
@@ -205,8 +276,49 @@
 
     function drawEnemies(){
         for(let i=0; i<enemies.length; i++){
-            if(enemies[i]._hp>0){
-                ctx.drawImage(dungeonIMG, (24+player.frame)*tileIMGres-1, 5*tileIMGres-12, tileIMGres, tileIMGres+12, enemies[i].x/10*tileIMGres, enemies[i]._y/10*tileIMGres, tileIMGres, tileIMGres+12);
+            if(enemies[i].hp>0){
+                ctx.drawImage(dungeonIMG, (24+enemies[i].animate())*tileIMGres-1, 5*tileIMGres-12, tileIMGres, tileIMGres+12, enemies[i].x/10*tileIMGres, enemies[i]._y/10*tileIMGres, tileIMGres, tileIMGres+12);
+                if(Math.abs(enemies[i].x - player.pos.x) < 40 && Math.abs(enemies[i].y - player.pos.y) < 30){
+                    enemies[i].moveTowards(player.pos.x, player.pos.y, activeMap.map);
+                }
+                if(Math.abs(player.pos.x - enemies[i].x) < 5){
+                    if(Math.abs(player.pos.y - enemies[i].y) < 5){
+                        console.log("ouch!");
+
+                        let moveX = (player.pos.x - enemies[i].x)*1.5;
+                        let moveY = (player.pos.y - enemies[i].y);
+
+                        let colY = false, colX = false;
+
+                        //1 = up, 2 = right, 3 = down, 4 = left
+                        if(moveX > 0){
+                            colX = checkCol(2);
+                        } else {
+                            colX = checkCol(4);
+                        }
+
+                        if(moveY > 0){
+                            colY = checkCol(3);
+                        } else {
+                            colY = checkCol(1);
+                        }
+
+                        if(player.pos.x > 5 && player.pos.x / 10 < width-1.5){
+
+                            if(!colX){
+                                player.pos.x += moveX;
+                                enemies[i].x -= moveX/3;
+                            }
+                        }
+
+                        if(player.pos.y > 5 && player.pos.y / 10 < height-1){
+                            if(!colY){
+                                player.pos.y += moveY;
+                                enemies[i].y -= moveY/3;
+                            }
+                        }
+                    }
+                }
             } else if(enemies[i]._deathFrames > 0) {
                 ctx.setTransform(1, 0, 0, 1, enemies[i].x/10*tileIMGres, enemies[i]._y/10*tileIMGres);
                 ctx.rotate(135 * Math.PI / 90);
@@ -219,29 +331,91 @@
 
     function attack(){
         if(player.attacking === true){
-            ctx.setTransform(1, 0, 0, 1, player.pos.x/10*tileIMGres, player.pos.y/10*tileIMGres);
-            ctx.rotate(player.attackFrame/2 * Math.PI / 90);
-            ctx.drawImage(dungeonIMG, 18*tileIMGres-1, 1*tileIMGres-12, tileIMGres, tileIMGres+12, tileIMGres, -tileIMGres/2, tileIMGres, tileIMGres+12);
+            if(!player.attackAnim){
+                switch(player.dir){
+                    case "right":   player.attackRot = -0.3; break;
+                    case "left":    player.attackRot = 2.2; break;
+                    case "up":      player.attackRot = -90; break;
+                    case "down":    player.attackRot = 45; break;
+                }
+            }
+            ctx.setTransform(1, 0, 0, 1, (player.pos.x+5)/10*tileIMGres, (player.pos.y+5)/10*tileIMGres);
+            ctx.rotate(player.attackRot + player.attackFrame/2 * Math.PI / 90);
+            ctx.drawImage(dungeonIMG, 18*tileIMGres-1, 1*tileIMGres-12, tileIMGres, tileIMGres+12, tileIMGres-6, -tileIMGres/2, tileIMGres, tileIMGres+12);
             ctx.setTransform(1, 0, 0, 1, 0, 0);
             player.attackFrame++;
+            player.attackAnim = true;
             if(player.attackFrame>=30){
                 player.attackFrame = 0;
                 player.attacking = false;
+                player.attackAnim = false;
             }
         }
     }
 
     function checkAttack(){
-        for(let i=0; i<enemies.length; i++){
-            if(enemies[i]._hp > 0){
-                if(enemies[i].x >= player.pos.x && enemies[i].x <= player.pos.x  + (tileIMGres/3)){ //
-                    if(enemies[i].y >= player.pos.y - (tileIMGres/3) && enemies[i].y <= player.pos.y + (tileIMGres/3)){  //
-                        enemies[i].damage();
-                        console.log(enemies[i]._x - player.pos.x);
-                        console.log(enemies[i]._x - player.pos.x + tileIMGres);
-                    }
-                }
-            }
+        let rightOffset = 0;
+        let leftOffset = 0;
+        let upOffset = 0;
+        let downOffset = 0;
+
+        switch(player.dir){
+            case "up":      upOffset = -17; downOffset = 0;
+                            leftOffset = -5; rightOffset = 15;
+                            for(let i=0; i<enemies.length; i++){
+                                if(enemies[i]._hp > 0){
+                                    if(enemies[i].y <= player.pos.y + downOffset && enemies[i].y >= player.pos.y + upOffset &&
+                                       enemies[i].x <= player.pos.x + rightOffset && enemies[i].x >= player.pos.x + leftOffset){
+                                        console.log("hit");
+                                        enemies[i].damage();
+                                        enemies[i].y -= 10;
+                                    }
+                                }
+                            }
+            break;
+
+            case "down":    upOffset = 0;       downOffset = 15; 
+                            leftOffset = -5; rightOffset = 15;
+                            for(let i=0; i<enemies.length; i++){
+                                if(enemies[i]._hp > 0){
+                                    if(enemies[i].y <= player.pos.y + downOffset && enemies[i].y >= player.pos.y + upOffset &&
+                                       enemies[i].x <= player.pos.x + rightOffset && enemies[i].x >= player.pos.x + leftOffset){
+                                        console.log("hit");
+                                        enemies[i].damage();
+                                        enemies[i].y += 10;
+                                    }
+                                }
+                            }
+            break;
+
+            case "left":    rightOffset = 0;    leftOffset = 20; 
+                            upOffset = -5;       downOffset = 5;
+                            for(let i=0; i<enemies.length; i++){
+                                if(enemies[i]._hp > 0){
+                                    if(enemies[i].x <= player.pos.x + rightOffset && enemies[i].x >= player.pos.x - leftOffset &&
+                                        enemies[i].y >= player.pos.y + upOffset && enemies[i].y <= player.pos.y + downOffset){
+                                        console.log("hit");
+                                        enemies[i].damage();
+                                        enemies[i].x -= 10;
+                                    }
+                                }
+                            }
+            break;
+
+            case "right":   rightOffset = 20;   leftOffset = 0;  
+                            upOffset = -5;       downOffset = 5;
+                            for(let i=0; i<enemies.length; i++){
+                                if(enemies[i]._hp > 0){
+                                    if(enemies[i].x <= player.pos.x + rightOffset && enemies[i].x >= player.pos.x - leftOffset &&
+                                        enemies[i].y >= player.pos.y + upOffset && enemies[i].y <= player.pos.y + downOffset){
+                                        console.log("hit");
+                                        enemies[i].damage();
+                                        enemies[i].x += 10;
+                                    }
+                                }
+                            }
+            
+            break;
         }
     }
 

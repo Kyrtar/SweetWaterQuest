@@ -9,8 +9,10 @@
 </head>
 <body>
 
-    <object id="content" type="text/html" data="./login.php">
-    </object>
+    <div>
+        <object id="content" type="text/html" data="./login.php">
+        </object>
+    </div>
 
 </body>
 </html>

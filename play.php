@@ -9,7 +9,14 @@
 </head>
 <body>
     <audio src="./audio/step.wav" id="step" ></audio>
-    <canvas id="game"></canvas>
+    <canvas id="game" tabindex="1"></canvas>
     <script src="./src/main.js" type="module"></script>
+    <?php
+        session_start();
+        if(isset($_SESSION['email'])){
+            echo('<a href="./logout.php"><button>Log out</button></a>');
+            echo('<a href="./control.php" target="_blank"><button>Panel de control</button></a>');
+        }
+    ?>
 </body>
 </html>

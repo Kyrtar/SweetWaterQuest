@@ -1,0 +1,97 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    /*background: black url("../img/bg_dif.png") no-repeat fixed center;*/
+    background: linear-gradient(to right, rgba(0,0,0,1) 20%, transparent 50%, rgba(0,0,0,1) 80%), url("../img/control.jpg") no-repeat fixed center;
+    background-size: auto 100%;
+    color: white;
+}
+
+h1{
+	top: 20%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	position: absolute;
+	font-size: 10vw;
+	margin: 0;
+	font-family: 'frozen', serif;
+
+  	background-clip: text;
+	-webkit-background-clip: text;
+    background-size: contain;
+	width: 100%;
+	text-align: center;
+	font-weight: 900;
+
+    color: #fff;
+    -webkit-animation: glow 1s ease-in-out infinite alternate;
+    -moz-animation: glow 1s ease-in-out infinite alternate;
+    animation: glow 2s ease-in-out infinite alternate;
+}
+
+html, body{
+	height: 100%;
+}
+
+h2{
+    position: absolute;
+    top: 40%;
+    width: 95%;
+    text-align: center;
+    
+    color: #fff;
+    font-size: 2em;
+    font-weight: bold;
+    font-family: Helvetica;
+    text-shadow: 
+    0 1px 0 #ccc, 
+    0 2px 0 #929292, 
+    0 3px 0 rgb(100, 100, 100), 
+    0 4px 0 #414141, 
+    0 5px 0 rgb(0, 0, 0), 
+    0 6px 1px rgba(0,0,0,.1), 
+    0 0 5px rgba(0,0,0,.1), 
+    0 1px 3px rgba(0,0,0,.3), 
+    0 3px 5px rgba(0,0,0,.2), 
+    0 5px 10px rgba(0,0,0,.25), 
+    0 10px 10px rgba(0,0,0,.2), 
+    0 20px 20px rgba(0,0,0,.15);
+}
+
+table{
+    position: fixed;
+    top: 47.5%;
+    left: 25%;
+    width: auto;
+    color: lightgray;
+    background-color: black;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th{
+    background: linear-gradient(to bottom, rgb(0, 3, 187) 10%, rgb(0,0,0) 50%, rgb(0, 3, 187) 90%);
+    color: darkgrey
+}
+
+td, th{
+    padding: 15px 30px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+@keyframes glow{
+    from {
+      text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #0472da, 0 0 20px #0472da, 0 0 25px #0472da, 0 0 30px #0472da, 0 0 35px #0472da;
+    }
+    to {
+      text-shadow: 0 0 10px #fff, 0 0 15px #16a9ee, 0 0 20px #16a9ee, 0 0 25px #16a9ee, 0 0 30px #16a9ee, 0 0 35px #16a9ee, 0 0 40px #16a9ee;
+    }
+  }
+  
+@font-face{
+	font-family:'frozen'; 
+	src:url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/209981/Ice%20kingdom%20-%20Bold%20-%20Por%20Kustren.woff');
+}

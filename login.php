@@ -1,4 +1,6 @@
 <?php
+    require_once('connection.php');
+
     // Comprobamos si ya se ha enviado el formulario
                      //añadida
                     $error="";
@@ -10,15 +12,6 @@
             $error = "Debes introducir un nombre de email y una contraseña";
         else {
             // Comprobamos las credenciales con la base de datos
-            // Conectamos a la base de datos
-            try {
-                $opc = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
-                $dsn = "mysql:host=localhost;dbname=proyecto_juego";
-                $conn = new PDO($dsn, "root", "", $opc);
-            }
-            catch (PDOException $e) {
-                die("Error: " . $e->getMessage());
-            }
 
              // Ejecutamos la consulta para comprobar las credenciales
             $sql = "SELECT id FROM users " .
@@ -28,19 +21,17 @@
             if($resultado = $conn->query($sql)) {
                 $fila = $resultado->fetch();
                 if ($fila != null) {
-                    session_start();
+                     
+                    session_start(); 
                     $_SESSION['email']=$email;
-                    header("Location: ./play.html");
+                    header("Location: ./play.php");
                     
                 }
                 else {
                     // Si las credenciales no son válidas, se vuelven a pedir
-                    $error = "email o contraseña no válidos";
+                    $error = "Email o contraseña no válidos";
                 }
                 unset($resultado);
-            } else {
-                // Si las credenciales no son válidas, se vuelven a pedir
-                $error = "email o contraseña no válidos";
             }
             unset($conn);            
         }
@@ -51,6 +42,7 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Acceso</title>  
+  <link rel="stylesheet" href="./styles/login.css">
 </head>
 
 <body>

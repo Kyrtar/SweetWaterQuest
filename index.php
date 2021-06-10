@@ -4,14 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./styles/index.css">
-    <title>Game</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">  
+
+    <title>Sweet Water Quest</title>
     <script type = "text/javascript" src = "log.js"></script>
 </head>
 <body>
 
     <div>
-        <object id="content" type="text/html" data="./login.php">
+        <h1>SWEET WATER QUEST</h1>
+        <?php
+            session_start();
+            if(isset($_SESSION['email'])){
+                echo('<object id="content" type="text/html" data="./play.php">');
+            } else{
+                session_destroy();
+                echo('<object id="content" type="text/html" data="./login.php">');
+            }
+        ?>
         </object>
+        
+
     </div>
 
 </body>

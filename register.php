@@ -1,4 +1,7 @@
 <?php
+
+    require_once('connection.php');
+    
     $error="";
     if (isset($_POST['enviar'])) {
         if(isset($_POST['name']) && !empty($_POST['name']) AND isset($_POST['email']) && !empty($_POST['email'])){
@@ -13,16 +16,6 @@
                 $error = "Debes introducir un email y una contraseña";
             } else {
                 // Comprobamos las credenciales con la base de datos
-                // Conectamos a la base de datos
-                try {
-                    $opc = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
-                    $dsn = "mysql:host=localhost;dbname=proyecto_juego";
-                    $conn = new PDO($dsn, "root", "", $opc);
-                }
-                catch (PDOException $e) {
-                    die("Error: " . $e->getMessage());
-                }
-    
                  // Ejecutamos la consulta para comprobar las credenciales
                 $sql = "INSERT into users (id, email, pwd, user_type)" .
                 "VALUES('default', '$email', '$password', 1)";

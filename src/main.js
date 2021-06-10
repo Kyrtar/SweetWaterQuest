@@ -16,7 +16,7 @@
     
     //Creo el jugador
     var player = {
-        pos: {x:95, y:100},
+        pos: {x:20, y:80},
         class: 1,
         hp: 5,
         status: "idle",
@@ -72,12 +72,11 @@
     ]
 
     function load(){
-        /// add the onload handler before setting src.
-        villageIMG.onload = draw();
+        /// add the onload handler before setting src.¡
         villageIMG.src = "./img/village_bg.png";
-
-        dungeonIMG.onload = draw();
         dungeonIMG.src = "./img/dungeon_b.png";
+        document.getElementById("game").focus();
+        dungeonIMG.onload = draw();
     }
 
     function drawMap(map){

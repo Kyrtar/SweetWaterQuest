@@ -4,12 +4,12 @@
     
     $error="";
     if (isset($_POST['enviar'])) {
-        if(isset($_POST['name']) && !empty($_POST['name']) AND isset($_POST['email']) && !empty($_POST['email'])){
-            $name = htmlspecialchars($_POST['name']);
+        if(isset($_POST['password']) && !empty($_POST['password']) && isset($_POST['email']) && !empty($_POST['email'])){
+            $password = htmlspecialchars($_POST['password']);
             $email = htmlspecialchars($_POST['email']);
         }
         
-        if($email != $_POST['email2']){
+        if($_POST['email'] != $_POST['email2']){
             $error = "El email y la comprobación no coinciden";
         } else {
             if (empty($email) || empty($password)){
@@ -20,7 +20,7 @@
                 $sql = "INSERT into users (id, email, pwd, user_type)" .
                 "VALUES('default', '$email', '$password', 1)";
                 if ($conn->query($sql)) {
-                    echo "Usuario registrado, puedes acceder";
+                    $msg = "Usuario registrado, puedes acceder";
 
                     $sql =  "SELECT id FROM users " .
                         "WHERE email='$email' " .
@@ -34,16 +34,13 @@
                             
                         } else {
                             // Si las credenciales no son válidas, se vuelven a pedir
-                            $error = "email o contraseña no válidos 1";
+                            $error = "email o contraseña no válidos";
                         }
                         unset($resultado);
-                    } else {
-                        // Si las credenciales no son válidas, se vuelven a pedir
-                        $error = "email o contraseña no válidos 2";
                     }
                     unset($conn); 
                 } else {
-                    echo "Error: " . $sql . "<br>" . $error;
+                    echo "<p id='error'>Error: " . $sql . "<br>" . $error."<p>";
                 }           
             }
         }
@@ -54,11 +51,12 @@
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>Registro</title>  
+  <link rel="stylesheet" href="./styles/login.css">
 </head>
 
 <body>
     <div id='login'>
-    <form action='#' method='post'>
+    <form action='#' method='POST'>
     <fieldset >
         <legend>Registro</legend>
         <div><span class='error'><?php echo $error; ?></span></div>
@@ -74,6 +72,12 @@
             <label for='password' >Contraseña:</label><br/>
             <input type='password' name='password' id='password' maxlength="50" /><br/>
         </div>
+
+        <?php
+            if(isset($msg)){
+                echo($msg);
+            }
+        ?>
 
         <div class='campo'>
             <input type='submit' name='enviar' value='Enviar' />

@@ -7,3 +7,29 @@ canvas { display:block; } /* To remove the scrollbars */
 img{
     display: none;
 }
+
+button{
+    width: 100px;
+    height: 60px;
+    padding: 5% 10%;
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
+}
+
+#buttons{
+    margin-top: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#save{
+    background-color: greenyellow;
+}
+
+#out{
+    background-color: orange;
+}
+
+#control{
+    background-color: aquamarine;
+}

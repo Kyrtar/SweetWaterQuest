@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">  
 
     <title>Sweet Water Quest</title>
-    <script type = "text/javascript" src = "log.js"></script>
 </head>
 <body>
 

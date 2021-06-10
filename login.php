@@ -53,11 +53,11 @@
         <div><span class='error'><?php echo $error; ?></span></div>
         <div class='campo'>
             <label for='email' >Email:</label><br/>
-            <input type='text' name='email' id='email' maxlength="50" /><br/>
+            <input type='text' name='email' id='email' maxlength="50"  autocomplete="Email"/><br/>
         </div>
         <div class='campo'>
             <label for='password' >Contraseña:</label><br/>
-            <input type='password' name='password' id='password' maxlength="50" /><br/>
+            <input type='password' name='password' id='password' maxlength="50" autocomplete="current-password"/><br/>
         </div>
 
         <div class='campo'>
@@ -65,7 +65,15 @@
         </div>
     </fieldset>
     </form>
-    <a href="./register.php"><p>Ir a registro de nuevo usuario</p></a>
+    <?php
+        echo('<div id="buttons">
+            <a href="./register.php">
+                <button id="reg">
+                    <span>Ir a registro</span>
+                </button>
+            </a>
+        </div>');
+    ?>
     </div>
 </body>
 </html>

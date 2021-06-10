@@ -31,6 +31,8 @@
                         if ($fila != null) {
                             session_start();
                             $_SESSION['id']=$fila;
+
+                            header("Location: ./play.php");
                             
                         } else {
                             // Si las credenciales no son válidas, se vuelven a pedir
@@ -84,7 +86,15 @@
         </div>
     </fieldset>
     </form>
-    <a href="./login.php"><p>Ir a acceso de usuario existente</p></a>
+    <?php
+        echo('<div id="buttons">
+            <a href="./login.php">
+                <button id="reg">
+                    <span>Ir a ingreso</span>
+                </button>
+            </a>
+        </div>');
+    ?>
     </div>
 </body>
 </html>

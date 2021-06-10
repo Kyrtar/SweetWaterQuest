@@ -14,8 +14,11 @@
     <?php
         session_start();
         if(isset($_SESSION['email'])){
-            echo('<a href="./logout.php"><button>Log out</button></a>');
-            echo('<a href="./control.php" target="_blank"><button>Panel de control</button></a>');
+            echo("<div id='buttons'>");
+                echo('<a href="./logout.php"><button id="out"><span>Log out</span></button></a>');
+                echo('<a href="./control.php" target="_blank"><button id="control"><span>Panel de control</span></button></a>');
+                echo('<a href="./save.php" target="_blank"><button id="save"><span>Salvar progreso</span></button></a>');
+            echo("</div id='buttons'>");
         }
     ?>
 </body>

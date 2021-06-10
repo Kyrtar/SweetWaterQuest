@@ -1,3 +1,15 @@
 form{
     background-color: rgb(248, 229, 204, 0.5) ;
+    text-align: center;
+}
+
+#buttons{
+    margin-top: 1%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+button{
+    text-align: center;
 }

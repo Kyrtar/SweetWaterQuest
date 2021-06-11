@@ -26,19 +26,15 @@ h1{
 	font-weight: 900;
 
     color: #fff;
-    -webkit-animation: glow 1s ease-in-out infinite alternate;
-    -moz-animation: glow 1s ease-in-out infinite alternate;
+    -webkit-animation: glow 2s ease-in-out infinite alternate;
+    -moz-animation: glow 2s ease-in-out infinite alternate;
     animation: glow 2s ease-in-out infinite alternate;
 }
 
-html, body{
-	height: 100%;
-}
-
 h2{
+    width: 99%;
     position: absolute;
     top: 40%;
-    width: 95%;
     text-align: center;
     
     color: #fff;
@@ -60,10 +56,15 @@ h2{
     0 20px 20px rgba(0,0,0,.15);
 }
 
+div{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
 table{
-    position: fixed;
+    position: absolute;
     top: 47.5%;
-    left: 25%;
     width: auto;
     color: lightgray;
     background-color: black;

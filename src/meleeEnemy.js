@@ -74,16 +74,16 @@ export class MeleeEnemy {
     checkCol(dir, activeMap){
         let result = false;
         switch(dir){
-            case 1: if(activeMap[Math.floor(this.y/10)][Math.round(this.x/10)] > 10){
+            case 1: if(activeMap[Math.floor(this.y/10)][Math.round(this.x/10)] > 20){
                         result = true;
                     }; break;
-            case 2: if(activeMap[Math.ceil(this.y/10)][Math.floor(this.x/10)+1] > 10){
+            case 2: if(activeMap[Math.ceil(this.y/10)][Math.floor(this.x/10)+1] > 20){
                         result = true;
                     }; break;
-            case 3: if(activeMap[Math.round(this.y/10)+1][Math.round(this.x/10)] > 10){
+            case 3: if(activeMap[Math.round(this.y/10)+1][Math.round(this.x/10)] > 20){
                         result = true;
                     }; break;
-            case 4: if(activeMap[Math.ceil(this.y/10)][Math.ceil(this.x/10)-1] > 10){
+            case 4: if(activeMap[Math.ceil(this.y/10)][Math.ceil(this.x/10)-1] > 20){
                         result = true;
                     }; break;
         }

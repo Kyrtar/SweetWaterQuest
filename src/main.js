@@ -28,8 +28,6 @@
         attackRot: 0
     }
     var animate = true;
-
-    var enemyFrame = 0;
     
     const MOVE_SPEED = 0.75;
 
@@ -46,21 +44,21 @@
         name: "village",
         hostile: false,
         map: [
-        [13,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,15],
-        [13,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,15],
-        [13,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,15],
-        [13,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,15],
-        [12,11,11,11,11,11,11,11,11,3,4,11,11,11,11,11,11,11,11,14],
-        [1,21,22,23,1,1,1,1,1,5,6,1,1,1,1,1,1,1,1,1],
-        [1,24,25,26,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1],
-        [1,27,28,29,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1],
-        [1,1,2,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1],
-        [1,1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,2,2,1,1,1,2,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1],
-        [1,1,1,1,1,1,1,1,1,2,2,1,1,1,1,1,1,1,1,1]
+        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 32, 31, 31, 31, 31, 31, 31, 31,  3,  7,  4, 31, 31, 31, 31, 31, 31, 31, 31, 34],
+        [111,114, 21, 22, 23,  1,  1,  1,  2,  5,  6,  1,  1,  1,  1,  1,  1,  1,121,124],
+        [112,115, 24, 25, 26,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,122,125],
+        [113,116, 27, 28, 29,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,123,126],
+        [111,114,  1,  2,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1, 51, 59, 59, 59],
+        [112,115,  1,  2,  2,  2,  2,  2,  2,  2,  2,  1,  1,  1,  1,  1, 55, 50, 50, 50],
+        [113,116,  1,  1,  1,  1,  1,  1, 15, 17, 16,  1, 51, 59, 59, 59, 56, 53, 58, 58],
+        [111,114,  1,  1,  1, 51, 59, 59, 13, 18, 14, 59, 56, 58, 58, 58, 58, 52,121,124],
+        [112,115,  1,  1, 51, 56, 53, 58, 11, 10, 12, 58, 52,  1,  1,  1,  1,  1,122,125],
+        [113,116,  1,  1, 55, 53, 52,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,123,126],
+        [127,128,127,128, 55, 54,127,128,  2,  2,  2,127,128,127,128,127,128,127,128,127]
         ]
     }
 
@@ -88,15 +86,59 @@
                     case 1: ctx.drawImage(villageIMG, 0*tileIMGres, 0*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 2: ctx.drawImage(villageIMG, 10*tileIMGres, 2*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 3: ctx.drawImage(villageIMG, 2*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 7: ctx.drawImage(villageIMG, 3*tileIMGres-tileIMGres/2, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 4: ctx.drawImage(villageIMG, 3*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 5: ctx.drawImage(villageIMG, 0*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 6: ctx.drawImage(villageIMG, 2*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     
-                    case 11: ctx.drawImage(villageIMG, 1*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 12: ctx.drawImage(villageIMG, 0*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 13: ctx.drawImage(villageIMG, 0*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 14: ctx.drawImage(villageIMG, 5*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 15: ctx.drawImage(villageIMG, 5*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 31: ctx.drawImage(villageIMG, 1*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 32: ctx.drawImage(villageIMG, 0*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 33: ctx.drawImage(villageIMG, 0*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 34: ctx.drawImage(villageIMG, 5*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 35: ctx.drawImage(villageIMG, 5*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    //Árboles
+                    //Izquierda
+                    case 111: ctx.drawImage(villageIMG, 12*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 112: ctx.drawImage(villageIMG, 12*tileIMGres, 19*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 113: ctx.drawImage(villageIMG, 12*tileIMGres, 20*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    //--
+                    case 114: ctx.drawImage(villageIMG, 13*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 115: ctx.drawImage(villageIMG, 13*tileIMGres, 19*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 116: ctx.drawImage(villageIMG, 13*tileIMGres, 20*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    //--Derecha
+                    case 121: ctx.drawImage(villageIMG, 9*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 122: ctx.drawImage(villageIMG, 9*tileIMGres, 19*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 123: ctx.drawImage(villageIMG, 9*tileIMGres, 20*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    //--
+                    case 124: ctx.drawImage(villageIMG, 10*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 125: ctx.drawImage(villageIMG, 10*tileIMGres, 19*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 126: ctx.drawImage(villageIMG, 10*tileIMGres, 20*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    //abajo
+                    case 127: ctx.drawImage(villageIMG, 10*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 128: ctx.drawImage(villageIMG, 11*tileIMGres, 18*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+
+                    //Agua
+                    case 50: ctx.drawImage(villageIMG, 9*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 51: ctx.drawImage(villageIMG, 2*tileIMGres, 2*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 52: ctx.drawImage(villageIMG, 1*tileIMGres, 1*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 53: ctx.drawImage(villageIMG, 3*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 54: ctx.drawImage(villageIMG, 3*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 55: ctx.drawImage(villageIMG, 8*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 56: ctx.drawImage(villageIMG, 8*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 57: ctx.drawImage(villageIMG, 1*tileIMGres, 1*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 58: ctx.drawImage(villageIMG, 4*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 59: ctx.drawImage(villageIMG, 5*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+
+                    //Puente
+                    case 10: ctx.drawImage(villageIMG, 10*tileIMGres + tileIMGres/2, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 11: ctx.drawImage(villageIMG, 10*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 12: ctx.drawImage(villageIMG, 11*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 13: ctx.drawImage(villageIMG, 10*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 14: ctx.drawImage(villageIMG, 11*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 15: ctx.drawImage(villageIMG, 10*tileIMGres, 3*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 16: ctx.drawImage(villageIMG, 11*tileIMGres, 3*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 17: ctx.drawImage(villageIMG, 10*tileIMGres + tileIMGres/2, 3*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 18: ctx.drawImage(villageIMG, 10*tileIMGres + tileIMGres/2, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
 
                     case 21: ctx.drawImage(villageIMG, 10*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 22: ctx.drawImage(villageIMG, 11*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
@@ -182,16 +224,16 @@
     function checkCol(dir){
         let result = false;
         switch(dir){
-            case 1: if(activeMap.map[Math.floor(player.pos.y/10)][Math.round(player.pos.x/10)] > 10){
+            case 1: if(activeMap.map[Math.floor(player.pos.y/10)][Math.round(player.pos.x/10)] > 20){
                         result = true;
                     }; break;
-            case 2: if(activeMap.map[Math.ceil(player.pos.y/10)][Math.floor(player.pos.x/10)+1] > 10){
+            case 2: if(activeMap.map[Math.ceil(player.pos.y/10)][Math.floor(player.pos.x/10)+1] > 20){
                         result = true;
                     }; break;
-            case 3: if(activeMap.map[Math.round(player.pos.y/10)+1][Math.round(player.pos.x/10)] > 10){
+            case 3: if(activeMap.map[Math.round(player.pos.y/10)+1][Math.round(player.pos.x/10)] > 20){
                         result = true;
                     }; break;
-            case 4: if(activeMap.map[Math.ceil(player.pos.y/10)][Math.ceil(player.pos.x/10)-1] > 10){
+            case 4: if(activeMap.map[Math.ceil(player.pos.y/10)][Math.ceil(player.pos.x/10)-1] > 20){
                         result = true;
                     }; break;
         }

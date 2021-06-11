@@ -46,10 +46,10 @@
         map: [
         [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
         [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
-        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
-        [ 33,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 33,  1,  1,  1,  1,  1,  1,  1,  5,  9,  6,  1,  1,  1,  1,  1,  1,  1,  1, 35],
+        [ 33,  1,  1,  1,  1,  1,  1,  5,  9,  9,  9,  6,  1,  1,  1,  1,  1,  1,  1, 35],
         [ 32, 31, 31, 31, 31, 31, 31, 31,  3,  7,  4, 31, 31, 31, 31, 31, 31, 31, 31, 34],
-        [111,114, 21, 22, 23,  1,  1,  1,  2,  5,  6,  1,  1,  1,  1,  1,  1,  1,121,124],
+        [111,114, 21, 22, 23,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,121,124],
         [112,115, 24, 25, 26,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,122,125],
         [113,116, 27, 28, 29,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1,  1,  1,123,126],
         [111,114,  1,  2,  1,  1,  1,  1,  2,  2,  2,  1,  1,  1,  1,  1, 51, 59, 59, 59],
@@ -88,8 +88,10 @@
                     case 3: ctx.drawImage(villageIMG, 2*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 7: ctx.drawImage(villageIMG, 3*tileIMGres-tileIMGres/2, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 4: ctx.drawImage(villageIMG, 3*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 5: ctx.drawImage(villageIMG, 0*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
-                    case 6: ctx.drawImage(villageIMG, 2*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 5: ctx.drawImage(villageIMG, 0*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 6: ctx.drawImage(villageIMG, 2*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 9: ctx.drawImage(villageIMG, 1*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    case 8: ctx.drawImage(villageIMG, 2*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     
                     case 31: ctx.drawImage(villageIMG, 1*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                     case 32: ctx.drawImage(villageIMG, 0*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;

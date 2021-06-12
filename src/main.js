@@ -34,7 +34,7 @@
 
     var maps = [];
     var activeMap = null;
-    var mapNumer = 1;
+    var mapNumer = 0;
 
     var villageIMG = new Image();
     var dungeonIMG = new Image();

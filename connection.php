@@ -13,6 +13,7 @@ function console_log($output, $with_script_tags = true) {
     // Conectamos a la base de datos
     try {
         
+        
         $server = "eu-cdbr-west-01.cleardb.com";
         $username = "b133e20a069394";
         $password = "56861c55";
@@ -31,6 +32,7 @@ function console_log($output, $with_script_tags = true) {
         $dsn = "mysql:host=localhost;dbname=proyecto_juego";
         $conn = new PDO($dsn, "root", "", $opc);
         */
+        
 
         
     }

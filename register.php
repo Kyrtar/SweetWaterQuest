@@ -47,7 +47,7 @@ if (isset($_POST['enviar'])) {
                                 $fila = $resultado->fetchColumn('0');
                                 //Creo un inventario para ese personaje
                                 $sql = "INSERT into inventories (id, id_char, item, quantity)" .
-                                    "VALUES('default', $fila, 1, 1)";
+                                    "VALUES('default', $fila, 5, 1)";
                                 if ($conn->query($sql)) {
                                     unset($resultado);
                                     unset($conn);

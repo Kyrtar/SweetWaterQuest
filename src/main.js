@@ -115,31 +115,33 @@
 
     let dungeonMap = {
         name: "dungeon",
-        npc: [],
+        npc: [
+            new NPC(18,4, "You saved me!", "mKid"),
+            new NPC(3,13, "Thank you!", "fKid"),],
         hostile: true,
         music: audio.dungeonMusic,
         enemies: [
-            new MeleeEnemy("skeleton", 3, 0.25, 1000, 50, 20),
-            new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 50),
-            new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 100),
-            new MeleeEnemy("skeleton", 3, 0.25, 1000, 100, 100)
+            new MeleeEnemy("skeleton", 3, 0.25, 1000, 30, 20),
+            new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 30),
+            new MeleeEnemy("skeleton", 3, 0.25, 1000, 20, 100),
+            new MeleeEnemy("skeleton", 3, 0.25, 1000, 110, 70)
         ],
         map: [
-        [102,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,103],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
-        [105,101,101,101,101,101,101,101,  2,  2,  2,101,101,101,101,101,101,101,101,104]
+        [102,101,101,101,103,  0,  0,  0,  0,  0,  0,102,101,101,101,101,101,101,101,103],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),106,  0,  0,  0,  0,  0,  0,100,r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),105,101,101,101,101,101,101,104,r(),106,101,101,101,101,101,104],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106,  0,  0,  0,  0,  0,  0],
+        [100,r(),r(),r(),102,101,101,101,101,101,101,101,r(),106,  0,  0,  0,  0,  0,  0],
+        [100,r(),r(),r(),106,  0,100,r(),r(),r(),r(),r(),r(),106,  0,  0,  0,  0,  0,  0],
+        [100,r(),r(),r(),106,  0,100,r(),r(),r(),r(),r(),r(),106,  0,  0,  0,  0,  0,  0],
+        [100,r(),r(),r(),106,  0,100,r(),r(),r(),r(),r(),r(),106,  0,  0,  0,  0,  0,  0],
+        [100,r(),r(),r(),106,  0,100,r(),r(),r(),r(),r(),r(),106,  0,  0,  0,  0,  0,  0],
+        [105,101,101,101,104,  0,105,101,  2,  2,  2,101,101,101,  0,  0,  0,  0,  0,  0]
         ],
         nextMap: null,
         previousMap: [95,140],
@@ -505,8 +507,8 @@
         for(let i = 0; i < activeMap.npc.length; i++){
             switch(activeMap.npc[i].sprite){
                 case "elder": ctx.drawImage(dungeonIMG, 13*tileIMGres+1, 11*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres, tileIMGres+16); break;
-                case "mKid":  ctx.drawImage(dungeonIMG, 10*tileIMGres+1, 3*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres, tileIMGres+16); break;
-                case "fKid":  ctx.drawImage(dungeonIMG, 10*tileIMGres+1, 1*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres, tileIMGres+16); break;
+                case "mKid":  ctx.drawImage(dungeonIMG, 10*tileIMGres+1, 3*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres-4, tileIMGres); break;
+                case "fKid":  ctx.drawImage(dungeonIMG, 10*tileIMGres+1, 1*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres-4, tileIMGres); break;
                 case "sign":  ctx.drawImage(villageIMG, 8*tileIMGres+1, 13*tileIMGres, tileIMGres, tileIMGres, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres, tileIMGres, tileIMGres); break;
                 default: ctx.drawImage(dungeonIMG, 8*tileIMGres+1, 13*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres, tileIMGres, tileIMGres+16); break;
             }

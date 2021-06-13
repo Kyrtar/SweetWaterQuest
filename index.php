@@ -17,10 +17,13 @@
     <div>
         <h1>SWEET WATER QUEST</h1>
         <?php
+            //Compruebo si hay sesión creada
             session_start();
             if(isset($_SESSION['email'])){
-                echo('<object id="content" type="text/html" data="./play.php">');
+                //Si la hay muestro el panel de control
+                echo('<object id="content" type="text/html" data="./control.php" allow="autoplay">');
             } else{
+                //Si no la hay, destruyo la sesión y muestro el login
                 session_destroy();
                 echo('<object id="content" type="text/html" data="./login.php">');
             }

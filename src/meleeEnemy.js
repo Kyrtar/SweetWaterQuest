@@ -1,6 +1,5 @@
-//Creo una clase para los sonidos, así les doy más funcionalidad
+//Clase enemigo que perseguirá y atacará al jugador
 export class MeleeEnemy {
-    //En el constructor paso el nombre del elemento en el html y si debe repetirse el audio al terminar
     constructor(type, hp, speed, cdAttack, x, y) {
         this.type = type;
         this.hp = hp;
@@ -52,6 +51,7 @@ export class MeleeEnemy {
         this._animFrame = newAnimFrame;
     }
 
+    //Animación
     animate(){
         if(this._animFrame >= 59){
             this._animFrame = 0;
@@ -61,15 +61,18 @@ export class MeleeEnemy {
         return Math.floor(this._animFrame/20);
     }
 
+    //Devuelve la posición como un objeto
     getPos(){
         let pos = {enemy_x: this._x, enemy_y: this._y };
         return pos;
     }
 
+    //Recibe daño
     damage(){
         this.hp -= 1;
     }
 
+    //Comprueba si puede moverse en una dirección
     //1 = up, 2 = right, 3 = down, 4 = left
     checkCol(dir, activeMap){
         let result = false;
@@ -90,6 +93,7 @@ export class MeleeEnemy {
         return result;
     }
 
+    //Se mueve hacia el jugador
     moveTowards(playerX, playerY, map){
         if(this.x > 1 && this.x < map[0].length*10){
             if(this.x > playerX && !this.checkCol(4, map)){

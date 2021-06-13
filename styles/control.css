@@ -84,8 +84,21 @@ td, th{
 
 .back{
     position: fixed;
-    top: 5vh;
-    left: 5vw;
+    left: 35vw;
+    top: 35vh;
+    background-color: greenyellow;
+    color: black;
+    height: 10vh;
+    width: 25vw;
+    cursor:pointer;
+}
+
+.back:hover{
+    background-color: rgb(205, 255, 131);
+}
+
+.back:active{
+    background-color: rgb(205, 255, 131);
 }
 
 .error{

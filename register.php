@@ -3,6 +3,7 @@
 require_once('connection.php');
 
 $error = "";
+//Compruebo que los datos sean correctos
 if (isset($_POST['enviar'])) {
     if (isset($_POST['password']) && !empty($_POST['password']) && isset($_POST['email']) && !empty($_POST['email'])) {
         $password = htmlspecialchars($_POST['password']);
@@ -18,14 +19,13 @@ if (isset($_POST['enviar'])) {
             if (empty($_POST["charName"])) {
                 $error = "Debes introducir un nombre para tu personaje";
             } else {
-                // Comprobamos las credenciales con la base de datos
-                // Ejecutamos la consulta para comprobar las credenciales
+                //Si todo está bien creo un usuario
                 $sql = "INSERT into users (id, email, pwd, user_type)" .
                     "VALUES('default', '$email', '$password', 1)";
                 if ($conn->query($sql)) {
 
                     $msg = "Usuario registrado, puedes acceder";
-
+                    //Una vez creado, cojo el ID que se le ha generado
                     $sql =  "SELECT id FROM users " .
                         "WHERE email='$email' " .
                         "AND pwd='" . $password . "'";
@@ -35,22 +35,24 @@ if (isset($_POST['enviar'])) {
                         if ($fila != null) {
                             $id = $fila;
 
+                            //Con ese ID creo un personaje con el nombre que ha elegido el jugador
                             $sql = "INSERT into player_characters (id, id_user, name, experience, level) " .
                                     "VALUES('default', $fila, '".$_POST['charName']."', '0', 1)";
                             $conn->query($sql);
-
+                            //Consigo el id del personaje
                             $sql = "SELECT id FROM player_characters " .
                                    "WHERE id_user = '$fila'";
                             $conn->query($sql);
                             if ($resultado = $conn->query($sql)) {
                                 $fila = $resultado->fetchColumn('0');
+                                //Creo un inventario para ese personaje
                                 $sql = "INSERT into inventories (id, id_char, item, quantity)" .
                                     "VALUES('default', $fila, 1, 1)";
                                 if ($conn->query($sql)) {
                                     unset($resultado);
                                     unset($conn);
                                 } else {
-                                    $error="No";
+                                    $error="Algo ha salido mal";
                                 }
                             }
                         }

@@ -11,8 +11,11 @@
     <audio src="./audio/step.wav" id="step" ></audio>
     <canvas id="game" tabindex="1"></canvas>
     <script src="./src/main.js" type="module"></script>
+
     <?php
+        //Creo una sesión
         session_start();
+        //Con este script cojo los datos de la base de datos y los paso a javascript sin jquery
         echo('
             <script>
                 localStorage.setItem("charName","'.$_SESSION['name'].'");
@@ -23,10 +26,11 @@
             </script>'
         );
 
+        //Creo los botones para salir, ir al panel de control y guardar partida
         if(isset($_SESSION['email'])){
             echo("<div id='buttons'>");
                 echo('<a href="./logout.php"><button id="out"><span>Log out</span></button></a>');
-                echo('<a href="./control.php"><button id="control"><span>Panel de control</span></button></a>');
+                echo('<a href="./control.php"><button id="control"><span>Control Panel</span></button></a>');
                 echo('<form action="save.php" method="POST" target=SaveGame>
                         <input type="submit" id="save" value="Save Game">
                         <input type="hidden" id="exp" name="exp" value="">
@@ -38,6 +42,7 @@
         }
     ?>
     <script>
+        //Con este script me aseguro de que se ejecute el script de arriba
         if (localStorage.getItem("charName") === null) {
             location.reload();
         }

@@ -4,7 +4,9 @@ require_once "connection.php";
 
 session_start();
 
+//Si hay una sesión creada, cojo el ID del usuario
 if(isset($_SESSION['id'])) {
+    //Con el ID del usuario y del personaje pongo todos los datos del personaje con su valor de creación
     $id = $_POST['id'];
     $char = $_POST['charID'];
     $exp = 0;

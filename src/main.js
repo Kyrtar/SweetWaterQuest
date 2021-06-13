@@ -3,38 +3,29 @@
     import {NPC} from "./npc.js";
     import {Item} from "./item.js"
 
-    /*
-    $('#save').click(function() {
-        $.ajax({
-          type: "POST",
-          url: "some.php",
-          data: { exp: player.exp,
-                  level: player.level }
-        }).done(function( msg ) {
-          alert( "Data Saved: " + msg );
-        });
-    });
-    */
-
     let canvas = document.getElementById('game');
     let ctx = canvas.getContext('2d');
 
     canvas.width = 640;
     canvas.height = 480;
 
+    //Con esta variablo calculo el refresco del juego
     let fps = 60;
 
+    //Variables sobre los sprites
     let tileIMGres = 32;
     let height = 15,
         width = 20;
 
+    //Timers
     var timer = null;
-
+    var dyingTimer = 0;
     
     //Creo el jugador
     var player = {
         pos: {x:20, y:90},
         class: 1,
+        //Adquiero algunas propiedades desde el localstorage, ya que vienen del servidor
         name: localStorage.getItem("charName"),
         level: parseInt(localStorage.getItem("charLevel")),
         exp: parseInt(localStorage.getItem("charExp")),
@@ -57,26 +48,41 @@
 
     var maps = [];
     var activeMap = null;
-    var mapNumer = 1;
+    var mapNumer = 0;
 
     var villageIMG = new Image();
     var dungeonIMG = new Image();
     var chatbox = new Image();
 
-    
-    var step = new sfx("step");
+    //Creo los audios que usa el juego, uso mi clase SFX
+    var audio = {
+        villageMusic: new sfx("./audio/village.mp3", true),
+        dungeonMusic: new sfx("./audio/dungeon.mp3", true),
+        gameOverMusic: new sfx("./audio/game_over.wav"),
+        hit: new sfx("./audio/hit.wav"),
+        skeleton: new sfx("./audio/skeleton.wav"),
+        potionSound: new sfx("./audio/potion.wav"),
+        healSound: new sfx("./audio/heal.wav")
+    }
 
 
+    //Creo el primer mapa
     let villageMap = {
         name: "village",
         npc: [
+            //Creo un array de npcs para que hablen con el jugador
             new NPC(8,5, "They're taking the children to the cave! Save them!", "elder"),
             new NPC(8,15, "Go to the cave!", "dino"),
             new NPC(8,15, "Go to the cave!", "dino"),
             new NPC(3,10, "Use the arrow keys to move and Z to attack", "sign")
         ],
+        //Decido si es hostil o no
         hostile: false,
+        //Le añado música
+        music: audio.villageMusic,
+        //Creo los enemigos
         enemies: [],
+        //Creo el mapa de tiles
         map: [
             [101,101,101,101,101,101,101,101, 91, 92, 93,101,101,101,101,101,101,101,101,101],
             [100,100,100,100,100,100,100,100, 14, 15, 16,100,100,100,100,100,100,100,100,100],
@@ -94,18 +100,24 @@
             [116,139,140,142, 65, 63, 62,  1,  2,  2,  2,  1,  1,  1,139,140,141,142,123,126],
             [127,128,127,128, 65, 64,127,128,  2,  2,  2,127,128,127,128,127,128,127,128,127]
         ],
+        //Añado las coordenadas para pasar al siguiente mapa
         nextMap: [95,0],
+        //Añado las coordenadas para volver al mapa anterior
         previousMap: null,
+        //Añado un punto de inicio para cuando el jugador cambia de zona
         startPoint: [95,35],
+        //Añado los objetos que habrá de serie en el mapa
         items: []
     }
 
+    //Añado el mapa creado al array de mapas
     maps.push(villageMap);
 
     let dungeonMap = {
         name: "dungeon",
         npc: [],
         hostile: true,
+        music: audio.dungeonMusic,
         enemies: [
             new MeleeEnemy("skeleton", 3, 0.25, 1000, 50, 20),
             new MeleeEnemy("skeleton", 3, 0.25, 1000, 150, 50),
@@ -137,12 +149,14 @@
 
     maps.push(dungeonMap);
 
+    //Creo una función para conseguir un número aleatorio para el mapa de mazmorra
     function r() {
         let min = 1;
         let max = 4;
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
+    //Cargo los assets
     function load(){
         /// add the onload handler before setting src.¡
         villageIMG.src = "./img/village_bg.png";
@@ -152,15 +166,41 @@
         dungeonIMG.onload = draw();
     }
 
+    //Función para añadir items
     function addItem(map, id, x, y){
         switch(id){
-            //Walkable
-            case 1: map.items.push(new Item(1,"5, heal", "Potion", 0, "Consumable", x, y)); console.log("Added "+x+" "+y); break;
+            //Poción
+            case 1: map.items.push(new Item(1,"5, heal", "Potion", 0, "Consumable", x, y)); break;
         }
         
     }
 
+    //Función para reiniciar cuando el jugador muere
+    function die(){
+        
+        audio.gameOverMusic.play();
+        window.removeEventListener("keydown", keyEventLogger);
+        window.removeEventListener("keyup", keyEventLogger);
+
+        setTimeout(function(){
+            player.potions = 1;
+            mapNumer = 0;
+            activeMap.music.stop();
+            activeMap = maps[mapNumer];
+            activeMap.music.play();
+            player.pos.x = 20
+            player.pos.y = 90;
+            player.exp = 0;
+            player.level = 1;
+            window.addEventListener("keydown", keyEventLogger);
+            window.addEventListener("keyup", keyEventLogger);
+            player.hp = player.MaxHp;
+        }, 2000);
+    }
+
+    //Dibujo el mapa
     function drawMap(map){
+        //Si es hostil uso el mapa de mazmorras, si no el de pueblo
         if(map.hostile != true){
             for(let y = 0; y < map.map.length; y++){
                 for(let x = 0; x < map.map[y].length; x++){
@@ -303,6 +343,7 @@
         
     }
 
+    //Dibujo los objetos recolectables
     function drawItems(map){
         for(let i = 0; i < map.items.length; i++){
             //onsole.log(i);
@@ -313,71 +354,7 @@
         }
     }
 
-    /*
-    //Draw map con zoom, siguiendo al jugador
-    //No funciona, no se usa.
-    function drawMap(map){
-
-        let startTileX = 0;
-        let startTileY = 0;
-
-        let endTileX = map[0].length;
-        let endTileY = map.length;
-
-        if(!map.hostile){
-            startTileX = Math.floor(player.pos.x/10) - 5;
-            startTileY = Math.floor(player.pos.y/10) - 2;
-            
-            if(startTileX < 0){
-                startTileX = 0;
-            }
-            if(startTileY < 0){
-                startTileY = 0;
-            }
-            endTileX = startTileX + 11;
-            endTileY = startTileY + 7;
-        }
-        
-
-        let drawX = 0;
-        let drawY = 0;
-
-
-        for(let y = startTileY; y < endTileY; y++){
-            for(let x = startTileX; x < endTileX; x++){
-
-                switch(map[y][x]){
-                    case 1: ctx.drawImage(villageIMG, 0*tileIMGres, 0*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 2: ctx.drawImage(villageIMG, 10*tileIMGres, 2*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 3: ctx.drawImage(villageIMG, 2*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 4: ctx.drawImage(villageIMG, 3*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 5: ctx.drawImage(villageIMG, 0*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 6: ctx.drawImage(villageIMG, 2*tileIMGres, 6*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    
-                    case 11: ctx.drawImage(villageIMG, 1*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 12: ctx.drawImage(villageIMG, 0*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 13: ctx.drawImage(villageIMG, 0*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 14: ctx.drawImage(villageIMG, 5*tileIMGres, 10*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 15: ctx.drawImage(villageIMG, 5*tileIMGres, 9*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-
-                    case 21: ctx.drawImage(villageIMG, 10*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 22: ctx.drawImage(villageIMG, 11*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 23: ctx.drawImage(villageIMG, 12*tileIMGres, 25*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 24: ctx.drawImage(villageIMG, 10*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 25: ctx.drawImage(villageIMG, 11*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 26: ctx.drawImage(villageIMG, 12*tileIMGres, 26*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 27: ctx.drawImage(villageIMG, 10*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 28: ctx.drawImage(villageIMG, 11*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                    case 29: ctx.drawImage(villageIMG, 12*tileIMGres, 27*tileIMGres, tileIMGres, tileIMGres, drawX*tileIMGres*2, drawY*tileIMGres*2, tileIMGres*2, tileIMGres*2); break;
-                }
-                drawX++;
-            }
-            drawX=0;
-            drawY++;
-        }
-        
-    }*/
-
+    //Compruebo las colisiones
     //1 = up, 2 = right, 3 = down, 4 = left
     function checkCol(dir){
         let result = false;
@@ -398,6 +375,7 @@
         return result;
     }
 
+    //Escucho los controles de teclado y muevo al jugador
     function movePlayer(){
         player.status = "idle";
         if (keyState[KEY_UP] && player.pos.y > 0 + MOVE_SPEED){
@@ -437,33 +415,45 @@
             }
         }
 
+        //Si el jugador se acerca al punto de entrada del siguiente mapa, viaja
         if(activeMap.nextMap != null){
-          if(Math.abs(player.pos.x - activeMap.nextMap[0]) <= 15){
+            if(Math.abs(player.pos.x - activeMap.nextMap[0]) <= 15){
                 if(Math.abs(player.pos.y - activeMap.nextMap[1]) <= 10){
+                    if(maps[mapNumer+1].hostile != maps[mapNumer.hostile]){
+                        maps[mapNumer].music.stop();
+                    }
                     mapNumer++;
                     activeMap = maps[mapNumer];
+                    activeMap.music.play();
                     player.pos.x = activeMap.startPoint[0];
                     player.pos.y = activeMap.startPoint[1];
                 }
             }
         }
 
+        //Si el jugador se acerca al punto de entrada del mapa anterior, viaja
         if(activeMap.previousMap != null){
             if(Math.abs(player.pos.x - activeMap.previousMap[0]) <= 15){
-                  if(Math.abs(player.pos.y - activeMap.previousMap[1]) <= 10){
-                      mapNumer--;
-                      activeMap = maps[mapNumer];
-                      player.pos.x = activeMap.startPoint[0];
-                      player.pos.y = activeMap.startPoint[1];
-                  }
-              }
+                if(Math.abs(player.pos.y - activeMap.previousMap[1]) <= 10){
+                    if(maps[mapNumer-1].hostile != maps[mapNumer.hostile]){
+                        maps[mapNumer].music.stop();
+                    }
+                    mapNumer--;
+                    activeMap = maps[mapNumer];
+                    activeMap.music.play();
+                    player.pos.x = activeMap.startPoint[0];
+                    player.pos.y = activeMap.startPoint[1];
+                }
+            }
         }
 
+        //Si el jugador se acerca a un objeto, los coge
         if(activeMap.items.length > 0){
             for(let i= 0; i < activeMap.items.length; i++){
                 if(Math.abs(player.pos.x - activeMap.items[i].x*10) <= 10){
                     if(Math.abs(player.pos.y - activeMap.items[i].y*10) <= 10){
                         player.potions++;
+                        audio.potionSound.play();
                         document.getElementById("potions").value = player.potions;
                         activeMap.items.splice(i,1);
                     }
@@ -472,7 +462,9 @@
         }
     }
 
+    //Dibujo al jugador
     function drawPlayer(){
+        //si el jugador está parado tiene un sprite fijo
         if(player.status==="idle"){
             switch(player.class){
                 case 1: if (player.dir=="up" || player.dir=="right") {
@@ -485,6 +477,7 @@
                         }
             }   
         } else {
+            //Si el jugador se está moviendo, se crea una animación
             switch(player.class){
                 case 1: if (player.dir=="down" || player.dir=="left") {
                             ctx.save();
@@ -508,6 +501,7 @@
     }
 
     function drawNPC(){
+        //Dibujo a los NPCs
         for(let i = 0; i < activeMap.npc.length; i++){
             switch(activeMap.npc[i].sprite){
                 case "elder": ctx.drawImage(dungeonIMG, 13*tileIMGres+1, 11*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres-16, tileIMGres, tileIMGres+16); break;
@@ -516,6 +510,7 @@
                 case "sign":  ctx.drawImage(villageIMG, 8*tileIMGres+1, 13*tileIMGres, tileIMGres, tileIMGres, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres, tileIMGres, tileIMGres); break;
                 default: ctx.drawImage(dungeonIMG, 8*tileIMGres+1, 13*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.npc[i].x*tileIMGres, activeMap.npc[i].y*tileIMGres, tileIMGres, tileIMGres+16); break;
             }
+            //Si el jugador se acerca aparecerá el mensaje del NPC
             if(Math.abs(player.pos.x - activeMap.npc[i].x*10) < 22){
                 if(Math.abs(player.pos.y - activeMap.npc[i].y*10) < 22){
                     ctx.drawImage(chatbox, 0, 0, 500, 280, 0, -50, 640, 280);
@@ -527,16 +522,21 @@
     }
 
     function drawEnemies(){
+        //Dibujo a los enemigos
         for(let i=0; i<activeMap.enemies.length; i++){
             if(activeMap.enemies[i].hp>0){
+                //Los enemigos siempre están animados
                 ctx.drawImage(dungeonIMG, (24+activeMap.enemies[i].animate())*tileIMGres-1, 5*tileIMGres-12, tileIMGres, tileIMGres+12, activeMap.enemies[i].x/10*tileIMGres, activeMap.enemies[i]._y/10*tileIMGres, tileIMGres, tileIMGres+12);
                 if(Math.abs(activeMap.enemies[i].x - player.pos.x) < 40 && Math.abs(activeMap.enemies[i].y - player.pos.y) < 30){
+                    //Si el jugador está cerca, muevo a los enemigos hacia él
                     activeMap.enemies[i].moveTowards(player.pos.x, player.pos.y, activeMap.map);
                 }
                 if(Math.abs(player.pos.x - activeMap.enemies[i].x) < 5){
                     if(Math.abs(player.pos.y - activeMap.enemies[i].y) < 5){
                         if(player.hp > 0){
+                            //Si el jugador se acerca demasiado a un enemigo, pierde vida
                             player.hp--;
+                            audio.hit.play();
                         }
 
                         let moveX = (player.pos.x - activeMap.enemies[i].x)*1.5;
@@ -544,6 +544,7 @@
 
                         let colY = false, colX = false;
 
+                        //Compruebo que el enemigo pueda moverse en la dirección del jugador
                         //1 = up, 2 = right, 3 = down, 4 = left
                         if(moveX > 0){
                             colX = checkCol(2);
@@ -558,8 +559,8 @@
                         }
 
                         if(player.pos.x > 5 && player.pos.x / 10 < width-1.5){
-
                             if(!colX){
+                                //Si el jugador recibe daño, tanto él como el enemigo se mueven en direcciones contrarias
                                 player.pos.x += moveX;
                                 activeMap.enemies[i].x -= moveX/3;
                             }
@@ -567,6 +568,7 @@
 
                         if(player.pos.y > 5 && player.pos.y / 10 < height-1){
                             if(!colY){
+                                //Si el jugador recibe daño, tanto él como el enemigo se mueven en direcciones contrarias
                                 player.pos.y += moveY;
                                 activeMap.enemies[i].y -= moveY/3;
                             }
@@ -574,16 +576,23 @@
                     }
                 }
             } else if(activeMap.enemies[i]._deathFrames > 0) {
+                //Si el enemigo muere, cambia su sprite
                 ctx.setTransform(1, 0, 0, 1, activeMap.enemies[i].x/10*tileIMGres, activeMap.enemies[i]._y/10*tileIMGres);
                 ctx.rotate(135 * Math.PI / 90);
                 ctx.drawImage(dungeonIMG, (30)*tileIMGres-1, 5*tileIMGres-12, tileIMGres, tileIMGres+12, -tileIMGres*1.5, -tileIMGres/2, tileIMGres, tileIMGres+12);
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 activeMap.enemies[i]._deathFrames--;
             } else {
-                addItem(activeMap, 1, activeMap.enemies[i].x/10, activeMap.enemies[i].y/10);
+                //Pasado un tiempo el enemigo muere y puede dejar caer una poción
+                if(Math.floor(Math.random() * (100 - 1 + 1) + 1) > 40){
+                    addItem(activeMap, 1, activeMap.enemies[i].x/10, activeMap.enemies[i].y/10);
+                }
+                //Elimino al enemigo del mapa
                 activeMap.enemies.splice(i,1);
+                //El jugador gana experiencia
                 player.exp += 100;
                 document.getElementById("exp").value = player.exp;
+                //Si el jugador gana suficiente experiencia, sube de nivel
                 if(player.exp >= 300){
                     player.exp -= 300;
                     player.level++;
@@ -594,7 +603,9 @@
     }
 
     function attack(){
+        //Compruebo si el jugador está atacando
         if(player.attacking === true){
+            //Roto el sprite de ataque dependiendo de la orientación
             if(!player.attackAnim){
                 switch(player.dir){
                     case "right":   player.attackRot = -0.3; break;
@@ -607,6 +618,7 @@
             ctx.rotate(player.attackRot + player.attackFrame/2 * Math.PI / 90);
             ctx.drawImage(dungeonIMG, 18*tileIMGres-1, 1*tileIMGres-12, tileIMGres, tileIMGres+12, tileIMGres-6, -tileIMGres/2, tileIMGres, tileIMGres+12);
             ctx.setTransform(1, 0, 0, 1, 0, 0);
+            //Genero la animación
             player.attackFrame++;
             player.attackAnim = true;
             if(player.attackFrame>=30){
@@ -623,6 +635,7 @@
         let upOffset = 0;
         let downOffset = 0;
 
+        //Compruebo si hay algún enemigo en el rango de alcance del ataque, en la dirección usada
         switch(player.dir){
             case "up":      upOffset = -20; downOffset = 0;
                             leftOffset = -5; rightOffset = 15;
@@ -630,8 +643,8 @@
                                 if(activeMap.enemies[i]._hp > 0){
                                     if(activeMap.enemies[i].y <= player.pos.y + downOffset && activeMap.enemies[i].y >= player.pos.y + upOffset &&
                                        activeMap.enemies[i].x <= player.pos.x + rightOffset && activeMap.enemies[i].x >= player.pos.x + leftOffset){
-                                        console.log("hit");
                                         activeMap.enemies[i].damage();
+                                        audio.skeleton.play();
                                         activeMap.enemies[i].y -= 10;
                                     }
                                 }
@@ -644,8 +657,8 @@
                                 if(activeMap.enemies[i]._hp > 0){
                                     if(activeMap.enemies[i].y <= player.pos.y + downOffset && activeMap.enemies[i].y >= player.pos.y + upOffset &&
                                        activeMap.enemies[i].x <= player.pos.x + rightOffset && activeMap.enemies[i].x >= player.pos.x + leftOffset){
-                                        console.log("hit");
                                         activeMap.enemies[i].damage();
+                                        audio.skeleton.play();
                                         activeMap.enemies[i].y += 10;
                                     }
                                 }
@@ -658,8 +671,8 @@
                                 if(activeMap.enemies[i]._hp > 0){
                                     if(activeMap.enemies[i].x <= player.pos.x + rightOffset && activeMap.enemies[i].x >= player.pos.x - leftOffset &&
                                         activeMap.enemies[i].y >= player.pos.y + upOffset && activeMap.enemies[i].y <= player.pos.y + downOffset){
-                                        console.log("hit");
                                         activeMap.enemies[i].damage();
+                                        audio.skeleton.play();
                                         activeMap.enemies[i].x -= 10;
                                     }
                                 }
@@ -672,8 +685,8 @@
                                 if(activeMap.enemies[i]._hp > 0){
                                     if(activeMap.enemies[i].x <= player.pos.x + rightOffset && activeMap.enemies[i].x >= player.pos.x - leftOffset &&
                                         activeMap.enemies[i].y >= player.pos.y + upOffset && activeMap.enemies[i].y <= player.pos.y + downOffset){
-                                        console.log("hit");
                                         activeMap.enemies[i].damage();
+                                        audio.skeleton.play();
                                         activeMap.enemies[i].x += 10;
                                     }
                                 }
@@ -684,7 +697,9 @@
     }
 
     function usePotion(){
+        //El jugador usa una poción, la elimina de su inventario y regenera vida
         if(player.potionCD == false && player.hp < player.MaxHp){
+            audio.healSound.play();
             player.potionCD = true;
             player.potions--;
             player.hp++;
@@ -700,6 +715,7 @@
         }
     }
 
+    //Dibujo la interfaz de usuario
     function drawUI(){
         //Hearts
         ctx.globalAlpha = 0.8;
@@ -736,6 +752,7 @@
         ctx.globalAlpha = 1;
     }
 
+    //Bucle de juego, parte principal infinita que llama a todo lo demás
     function draw() {
         if (localStorage.getItem("logOut") !== null) {
             localStorage.removeItem("logOut");
@@ -765,11 +782,17 @@
         drawItems(activeMap);
         drawPlayer();
         attack();
+        if(player.hp <= 0){
+            die();
+            ctx.fillStyle = "rgba(0, 0, 0,"+dyingTimer+")";
+            dyingTimer+=0.01;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
         drawUI();
     }
 
-    // define keys and an array to keep key states
-    // global key log;
+    // defino las teclas que se pueden usar y un array para guardar las que están activas
+    // Así puedo usar varias a la vez
     var keyState = [];
     const KEY_UP = 38;
     const KEY_DOWN = 40;
@@ -779,14 +802,18 @@
     const KEY_X = 88;
 
 
-    // create a logging function
+    // Creo las escuchas y el evento que capturan las teclas
     const keyEventLogger =  function (e) {  keyState[e.keyCode] = e.type == 'keydown';}
     window.addEventListener("keydown", keyEventLogger);
     window.addEventListener("keyup", keyEventLogger);
 
+    //activo las animaciones
     setInterval(function(){ animate = true }, 150);
 
 
+    //Declaro el mapa de inicio
     activeMap = maps[mapNumer];
-    console.log(player);
+    //Pongo en marcha la música
+    activeMap.music.play();
+    //Cargo los assets
     load();

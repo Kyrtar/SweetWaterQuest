@@ -1,6 +1,5 @@
-//Creo una clase para los sonidos, así les doy más funcionalidad
+//Clase Item que facilitará crear y colocar objetos en el mapa
 export class Item {
-    //En el constructor paso el nombre del elemento en el html y si debe repetirse el audio al terminar
     constructor(id, desc, name, rarity, category, x, y) {
         this.x = x;
         this.y = y;

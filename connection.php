@@ -12,7 +12,7 @@ function console_log($output, $with_script_tags = true) {
 
     // Conectamos a la base de datos
     try {
-        /*
+        
         $server = "eu-cdbr-west-01.cleardb.com";
         $username = "b133e20a069394";
         $password = "56861c55";
@@ -23,13 +23,14 @@ function console_log($output, $with_script_tags = true) {
 
         $conn = new PDO($dsn, "b133e20a069394", "56861c55", $opc);
         console_log($conn);
-        */
+        
         
         //Conexión local
-        
+        /*
         $opc = array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8");
         $dsn = "mysql:host=localhost;dbname=proyecto_juego";
         $conn = new PDO($dsn, "root", "", $opc);
+        */
 
         
     }

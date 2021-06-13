@@ -1,6 +1,7 @@
 <?php
     require_once('connection.php');
 
+    //Con este pequeño script aquí elimino todo el localstorage
     echo('
             <script>
                 localStorage.removeItem("charName");
@@ -12,15 +13,15 @@
         );
 
     $error="";
+    //Compruebo que lleguen todos los datos correctos
     if (isset($_POST['enviar'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
        
+        //Si algo sale mal muestro un error
         if (empty($email) || empty($password)) 
             $error = "Debes introducir un nombre de email y una contraseña";
         else {
-            // Comprobamos las credenciales con la base de datos
-
              // Ejecutamos la consulta para comprobar las credenciales
             $sql = "SELECT id FROM users " .
             "WHERE email='$email' " .
@@ -30,6 +31,7 @@
                 $fila = $resultado->fetchObject();
                 if ($fila != null) {
 
+                    //Si todo va bien inicio una sesión y empiezo a recoger datos
                     session_start(); 
                     $_SESSION['id'] = $fila->id;
 
@@ -39,7 +41,7 @@
                     if($resultado = $conn->query($sql)) {
                         $fila = $resultado->fetchObject();
                         if ($fila != null) {
-
+                            //Saco los datos del personaje de la base de datos
                             $_SESSION['charID'] = $fila->id;
                             $_SESSION['email']=$email;
                             $_SESSION['name']=$fila->name;
@@ -52,9 +54,10 @@
                             if($resultado = $conn->query($sql)) {
                                 $fila = $resultado->fetchObject();
                                 if ($fila != null) {
+                                    //Saco los datos del inventario del personaje de la base de datos
                                     $_SESSION['items']=$fila->item;
                                     $_SESSION['quantity']=$fila->quantity;
-                                    header("Location: ./play.php");
+                                    header("Location: ./control.php");
                                 }
                             }
                         }

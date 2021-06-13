@@ -2,7 +2,10 @@
 export class sfx {
     //En el constructor paso el nombre del elemento en el html y si debe repetirse el audio al terminar
     constructor(src, autoPlay = false) {
-        this.sound = document.getElementById(src);
+        this.sound = new Audio(src);
+        if(autoPlay){
+            this.sound.loop = true;
+        }
         //Creo una función para poder parar el audio cuando quiera
         this.stop = function () {
             this.sound.pause();

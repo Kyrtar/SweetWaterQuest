@@ -1,6 +1,5 @@
-//Creo una clase para los sonidos, así les doy más funcionalidad
+//Clase NPC que facilita colocar Personajes No Jugadores en el mapa y que den mensajes
 export class NPC {
-    //En el constructor paso el nombre del elemento en el html y si debe repetirse el audio al terminar
     constructor(x, y, msg, sprite) {
         this.x = x;
         this.y = y;

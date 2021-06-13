@@ -14,15 +14,18 @@
 
     <h1>Panel de control</h1>
 
-    <a href="./play.php"><button class="back">Back to the game</button></a>
+    <a href="./play.php"><button class="back">Start the game</button></a>
 
     <?php
+    //Creo la conexión a la base de datos e inicio la sesión
     include_once("connection.php");
     session_start();
 
     $error = "";
 
+    //Comprueblo si ya hay una sesión creada
     if(isset($_SESSION['email'])){
+        //Si la hay, miro de qué rango de usuario es
         $sql = "SELECT user_type, id FROM users WHERE email='" . $_SESSION['email'] . "'";
 
         if ($resultado = $conn->query($sql)) {
@@ -31,6 +34,7 @@
 
                 $user_id = $fila->id;
 
+                //Si es de rango 1 (Usuario), le muestro sus personajes
                 if ($fila->user_type == 1) {
                     $sql = "SELECT * FROM player_characters WHERE id_user='" . $user_id . "'";
 
@@ -69,6 +73,7 @@
                         unset($resultado);
                     }
                     echo ("</table></div>");
+                //Si tiene más rango le muestro todos los personajes y cuentas de la base de datos
                 } else {
                     $sql = "SELECT * FROM player_characters INNER JOIN users ON player_characters.id_user= users.id";
 
@@ -119,6 +124,7 @@
         unset($conn);
         echo ("<p class='error'>$error</p>");
     } else {
+        //Si alguien llega sin sesión, solo muestro un mensaje de error
         echo("<p class='error'>Please log in</p>");
     }
     ?>

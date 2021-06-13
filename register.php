@@ -33,16 +33,25 @@ if (isset($_POST['enviar'])) {
                     if ($resultado = $conn->query($sql)) {
                         $fila = $resultado->fetchColumn('0');
                         if ($fila != null) {
+                            $id = $fila;
 
-                            $sql = "INSERT into player_characters (id, id_user, name, experience, level)" .
-                                "VALUES('default', $fila, '".$_POST['charName']."', '0', 1)";
-                            if ($conn->query($sql)) {
-                                session_start();
-                                $_SESSION['id'] = $fila;
-                                $_SESSION['email'] = $email;
-                                unset($resultado);
-                                unset($conn);
-                                header("Location: ./play.php");
+                            $sql = "INSERT into player_characters (id, id_user, name, experience, level) " .
+                                    "VALUES('default', $fila, '".$_POST['charName']."', '0', 1)";
+                            $conn->query($sql);
+
+                            $sql = "SELECT id FROM player_characters " .
+                                   "WHERE id_user = '$fila'";
+                            $conn->query($sql);
+                            if ($resultado = $conn->query($sql)) {
+                                $fila = $resultado->fetchColumn('0');
+                                $sql = "INSERT into inventories (id, id_char, item, quantity)" .
+                                    "VALUES('default', $fila, 1, 1)";
+                                if ($conn->query($sql)) {
+                                    unset($resultado);
+                                    unset($conn);
+                                } else {
+                                    $error="No";
+                                }
                             }
                         }
                     }

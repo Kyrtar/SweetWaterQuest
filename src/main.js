@@ -1,6 +1,20 @@
     import {sfx} from "./sfx_class.js";
     import {MeleeEnemy} from "./meleeEnemy.js";
     import {NPC} from "./npc.js";
+    import {Item} from "./item.js"
+
+    /*
+    $('#save').click(function() {
+        $.ajax({
+          type: "POST",
+          url: "some.php",
+          data: { exp: player.exp,
+                  level: player.level }
+        }).done(function( msg ) {
+          alert( "Data Saved: " + msg );
+        });
+    });
+    */
 
     let canvas = document.getElementById('game');
     let ctx = canvas.getContext('2d');
@@ -14,11 +28,17 @@
     let height = 15,
         width = 20;
 
+    var timer = null;
+
     
     //Creo el jugador
     var player = {
-        pos: {x:95, y:120},
+        pos: {x:20, y:90},
         class: 1,
+        name: localStorage.getItem("charName"),
+        level: parseInt(localStorage.getItem("charLevel")),
+        exp: parseInt(localStorage.getItem("charExp")),
+        MaxHp: 5,
         hp: 5,
         status: "idle",
         frame: 0,
@@ -26,7 +46,10 @@
         attackFrame: 0,
         dir: "right",
         attackAnim: false,
-        attackRot: 0
+        attackRot: 0,
+        potions: parseInt(localStorage.getItem("quantity")),
+        potionCD: false,
+        potionTimer: 3.0
     }
     var animate = true;
     
@@ -34,7 +57,7 @@
 
     var maps = [];
     var activeMap = null;
-    var mapNumer = 0;
+    var mapNumer = 1;
 
     var villageIMG = new Image();
     var dungeonIMG = new Image();
@@ -71,9 +94,10 @@
             [116,139,140,142, 65, 63, 62,  1,  2,  2,  2,  1,  1,  1,139,140,141,142,123,126],
             [127,128,127,128, 65, 64,127,128,  2,  2,  2,127,128,127,128,127,128,127,128,127]
         ],
-        nextMap: [95,20],
+        nextMap: [95,0],
         previousMap: null,
-        startPoint: [95,35]
+        startPoint: [95,35],
+        items: []
     }
 
     maps.push(villageMap);
@@ -90,24 +114,25 @@
         ],
         map: [
         [102,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,101,103],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),100],
-        [  1,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 45],
-        [ 43,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 45],
-        [ 42,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 44],
-        [114,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),121],
-        [115,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),122],
-        [116,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),123],
-        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),100],
-        [  1,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 45],
-        [ 43,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 45],
-        [ 42,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(), 44],
-        [114,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),121],
-        [115,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),122],
-        [137,138,137,138,137,138,137,138,  2,  2,  2,137,138,137,138,137,138,137,138,137]
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [100,r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),r(),106],
+        [105,101,101,101,101,101,101,101,  2,  2,  2,101,101,101,101,101,101,101,101,104]
         ],
         nextMap: null,
         previousMap: [95,140],
-        startPoint: [95, 125]
+        startPoint: [95, 125],
+        items: [new Item(1,"5, heal", "Potion", 0, "Consumable", 9, 8)]
     }
 
     maps.push(dungeonMap);
@@ -125,6 +150,14 @@
         chatbox.src = "./img/chatbox.png";
         document.getElementById("game").focus();
         dungeonIMG.onload = draw();
+    }
+
+    function addItem(map, id, x, y){
+        switch(id){
+            //Walkable
+            case 1: map.items.push(new Item(1,"5, heal", "Potion", 0, "Consumable", x, y)); console.log("Added "+x+" "+y); break;
+        }
+        
     }
 
     function drawMap(map){
@@ -253,11 +286,31 @@
                         case 2: ctx.drawImage(dungeonIMG, 2*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                         case 3: ctx.drawImage(dungeonIMG, 3*tileIMGres, 4*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
                         case 4: ctx.drawImage(dungeonIMG, 2*tileIMGres, 5*tileIMGres, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                    
+                        //Walls
+                        case 100: ctx.drawImage(dungeonIMG, 2*tileIMGres, 8*tileIMGres+25, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 101: ctx.drawImage(dungeonIMG, 3*tileIMGres, 9*tileIMGres+25, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 102: ctx.drawImage(dungeonIMG, 5*tileIMGres, 9*tileIMGres-5, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 103: ctx.drawImage(dungeonIMG, 4*tileIMGres, 9*tileIMGres-5, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 104: ctx.drawImage(dungeonIMG, 3*tileIMGres, 10*tileIMGres-8, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 105: ctx.drawImage(dungeonIMG, 3*tileIMGres, 10*tileIMGres-8, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+                        case 106: ctx.drawImage(dungeonIMG, 3*tileIMGres, 8*tileIMGres+25, tileIMGres, tileIMGres, x*tileIMGres, y*tileIMGres, tileIMGres, tileIMGres); break;
+
                     }
                 }
             }
         }
         
+    }
+
+    function drawItems(map){
+        for(let i = 0; i < map.items.length; i++){
+            //onsole.log(i);
+            switch(map.items[i].id){
+                //Walkable
+                case 1: ctx.drawImage(dungeonIMG, 18*tileIMGres, 14*tileIMGres, tileIMGres, tileIMGres, map.items[i].x*tileIMGres, map.items[i].y*tileIMGres, tileIMGres, tileIMGres); break;
+            }
+        }
     }
 
     /*
@@ -387,7 +440,6 @@
         if(activeMap.nextMap != null){
           if(Math.abs(player.pos.x - activeMap.nextMap[0]) <= 15){
                 if(Math.abs(player.pos.y - activeMap.nextMap[1]) <= 10){
-                    console.log("traveling");
                     mapNumer++;
                     activeMap = maps[mapNumer];
                     player.pos.x = activeMap.startPoint[0];
@@ -399,14 +451,25 @@
         if(activeMap.previousMap != null){
             if(Math.abs(player.pos.x - activeMap.previousMap[0]) <= 15){
                   if(Math.abs(player.pos.y - activeMap.previousMap[1]) <= 10){
-                      console.log("traveling");
                       mapNumer--;
                       activeMap = maps[mapNumer];
                       player.pos.x = activeMap.startPoint[0];
                       player.pos.y = activeMap.startPoint[1];
                   }
               }
-          }
+        }
+
+        if(activeMap.items.length > 0){
+            for(let i= 0; i < activeMap.items.length; i++){
+                if(Math.abs(player.pos.x - activeMap.items[i].x*10) <= 10){
+                    if(Math.abs(player.pos.y - activeMap.items[i].y*10) <= 10){
+                        player.potions++;
+                        document.getElementById("potions").value = player.potions;
+                        activeMap.items.splice(i,1);
+                    }
+                }
+            }
+        }
     }
 
     function drawPlayer(){
@@ -472,7 +535,9 @@
                 }
                 if(Math.abs(player.pos.x - activeMap.enemies[i].x) < 5){
                     if(Math.abs(player.pos.y - activeMap.enemies[i].y) < 5){
-                        console.log("ouch!");
+                        if(player.hp > 0){
+                            player.hp--;
+                        }
 
                         let moveX = (player.pos.x - activeMap.enemies[i].x)*1.5;
                         let moveY = (player.pos.y - activeMap.enemies[i].y);
@@ -515,7 +580,15 @@
                 ctx.setTransform(1, 0, 0, 1, 0, 0);
                 activeMap.enemies[i]._deathFrames--;
             } else {
+                addItem(activeMap, 1, activeMap.enemies[i].x/10, activeMap.enemies[i].y/10);
                 activeMap.enemies.splice(i,1);
+                player.exp += 100;
+                document.getElementById("exp").value = player.exp;
+                if(player.exp >= 300){
+                    player.exp -= 300;
+                    player.level++;
+                    document.getElementById("level").value = player.level;
+                }
             }
         }
     }
@@ -551,7 +624,7 @@
         let downOffset = 0;
 
         switch(player.dir){
-            case "up":      upOffset = -17; downOffset = 0;
+            case "up":      upOffset = -20; downOffset = 0;
                             leftOffset = -5; rightOffset = 15;
                             for(let i=0; i<activeMap.enemies.length; i++){
                                 if(activeMap.enemies[i]._hp > 0){
@@ -610,7 +683,64 @@
         }
     }
 
+    function usePotion(){
+        if(player.potionCD == false && player.hp < player.MaxHp){
+            player.potionCD = true;
+            player.potions--;
+            player.hp++;
+            document.getElementById("potions").value = player.potions;
+            setTimeout(function(){
+                player.potionCD = false;
+            }, 3000);
+            timer = setInterval(function(){
+                ctx.font = '22px futura';
+                ctx.fillStyle = "rgb(255,255,255)";
+                player.potionTimer -= 0.1;
+            }, 100)
+        }
+    }
+
+    function drawUI(){
+        //Hearts
+        ctx.globalAlpha = 0.8;
+        for(let i = 1; i <= player.hp; i++){
+            ctx.drawImage(dungeonIMG, 18*tileIMGres, 16*tileIMGres, tileIMGres, tileIMGres, 1*i*tileIMGres, 10, tileIMGres, tileIMGres);
+        }
+        for(let i = 1; i <= player.MaxHp - player.hp; i++){
+            ctx.drawImage(dungeonIMG, 20*tileIMGres, 16*tileIMGres, tileIMGres, tileIMGres, 6*tileIMGres - i*tileIMGres, 10, tileIMGres, tileIMGres);
+        }
+
+        //Potions
+        if(player.potions <= 0 || player.potionTimer != 3){
+            ctx.globalAlpha = 0.33;
+        }
+        ctx.drawImage(dungeonIMG, 19*tileIMGres, 12*tileIMGres, tileIMGres*2, tileIMGres*2, 0.5*tileIMGres, 12.5*tileIMGres, tileIMGres*1.5, tileIMGres*1.5);
+        ctx.font = '22px futura';
+        ctx.fillStyle = "rgb(255,255,255)";
+        ctx.fillText("x "+player.potions, 2.5*tileIMGres, 13.5*tileIMGres);
+        if(player.potionTimer != 3.0 && player.potions > 0){
+            ctx.fillText(player.potionTimer.toFixed(1)+" s", 1*tileIMGres, 12*tileIMGres);
+        }
+        if(player.potionTimer <= 0){
+            clearInterval(timer);
+            player.potionTimer = 3.0;
+            timer = null;
+        }
+
+        ctx.globalAlpha = 0.8;
+        //Name, lvl, expctx.font = '22px futura';
+        ctx.fillText(player.name, 8*tileIMGres, 1*tileIMGres);
+        ctx.fillText("Level: "+player.level, 17 *tileIMGres, 1*tileIMGres);
+        ctx.fillText("Experience: "+player.exp, 14.75 *tileIMGres, 2*tileIMGres);
+
+        ctx.globalAlpha = 1;
+    }
+
     function draw() {
+        if (localStorage.getItem("logOut") !== null) {
+            localStorage.removeItem("logOut");
+            window.location.replace("./login.php");
+        }
         setTimeout(function(){
             //Limpio el canvas
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -624,14 +754,18 @@
                     checkAttack();
                 }   
             }
-
+            if (keyState[KEY_X] && player.potions > 0) {
+                usePotion();
+            }
         }, 1000/fps);
         
         drawMap(activeMap);
         drawEnemies();
         drawNPC();
+        drawItems(activeMap);
         drawPlayer();
         attack();
+        drawUI();
     }
 
     // define keys and an array to keep key states
@@ -642,6 +776,7 @@
     const KEY_LEFT = 37;
     const KEY_RIGHT = 39;
     const KEY_Z = 90;
+    const KEY_X = 88;
 
 
     // create a logging function
@@ -653,4 +788,5 @@
 
 
     activeMap = maps[mapNumer];
+    console.log(player);
     load();

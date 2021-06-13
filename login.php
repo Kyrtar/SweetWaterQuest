@@ -1,9 +1,17 @@
 <?php
     require_once('connection.php');
 
-    // Comprobamos si ya se ha enviado el formulario
-                     //añadida
-                    $error="";
+    echo('
+            <script>
+                localStorage.removeItem("charName");
+                localStorage.removeItem("charExp");
+                localStorage.removeItem("charLevel");
+                localStorage.removeItem("items");
+                localStorage.removeItem("quantity");
+            </script>'
+        );
+
+    $error="";
     if (isset($_POST['enviar'])) {
         $email = $_POST['email'];
         $password = $_POST['password'];
@@ -19,13 +27,38 @@
             "AND pwd='" . $password . "'";
             
             if($resultado = $conn->query($sql)) {
-                $fila = $resultado->fetch();
+                $fila = $resultado->fetchObject();
                 if ($fila != null) {
-                     
+
                     session_start(); 
-                    $_SESSION['email']=$email;
-                    header("Location: ./play.php");
-                    
+                    $_SESSION['id'] = $fila->id;
+
+                    $sql = "SELECT player_characters.id, player_characters.name, player_characters.experience, player_characters.level 
+                            FROM player_characters INNER JOIN users 
+                            ON player_characters.id_user = users.id WHERE users.id = ".$_SESSION['id'];
+                    if($resultado = $conn->query($sql)) {
+                        $fila = $resultado->fetchObject();
+                        if ($fila != null) {
+
+                            $_SESSION['charID'] = $fila->id;
+                            $_SESSION['email']=$email;
+                            $_SESSION['name']=$fila->name;
+                            $_SESSION['experience']=$fila->experience;
+                            $_SESSION['level']=$fila->level;
+                            
+                            $sql = "SELECT item, quantity 
+                            FROM inventories INNER JOIN player_characters 
+                            ON inventories.id_char = player_characters.id WHERE player_characters.id = ".$_SESSION['charID'];
+                            if($resultado = $conn->query($sql)) {
+                                $fila = $resultado->fetchObject();
+                                if ($fila != null) {
+                                    $_SESSION['items']=$fila->item;
+                                    $_SESSION['quantity']=$fila->quantity;
+                                    header("Location: ./play.php");
+                                }
+                            }
+                        }
+                    }
                 }
                 else {
                     // Si las credenciales no son válidas, se vuelven a pedir
@@ -46,6 +79,13 @@
 </head>
 
 <body>
+
+    <script>
+        if (localStorage.getItem("charName") !== null) {
+            console.log("Recarga")
+            location.reload();
+        }
+    </script>
     <div id='login'>
     <form action='login.php' method='post'>
     <fieldset >

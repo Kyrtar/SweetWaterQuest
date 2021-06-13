@@ -10,11 +10,11 @@ body{
 }
 
 h1{
+	position: absolute;
 	top: 20%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	position: absolute;
-	font-size: 10vw;
+	font-size: 6vw;
 	margin: 0;
 	font-family: 'frozen', serif;
 
@@ -23,7 +23,6 @@ h1{
     background-size: contain;
 	width: 100%;
 	text-align: center;
-	font-weight: 900;
 
     color: #fff;
     -webkit-animation: glow 2s ease-in-out infinite alternate;
@@ -33,12 +32,12 @@ h1{
 
 h2{
     width: 99%;
-    position: absolute;
-    top: 40%;
+    position: fixed;
+    top: 22vh;
     text-align: center;
     
     color: #fff;
-    font-size: 2em;
+    font-size: 3.5vw;
     font-weight: bold;
     font-family: Helvetica;
     text-shadow: 
@@ -65,7 +64,7 @@ div{
 table{
     position: absolute;
     top: 47.5%;
-    width: auto;
+    width: 95%;
     color: lightgray;
     background-color: black;
     border-collapse: collapse;
@@ -78,9 +77,27 @@ th{
 }
 
 td, th{
-    padding: 15px 30px;
+    padding: 2vh 1.5vw;
     box-sizing: border-box;
     overflow: auto;
+}
+
+.back{
+    position: fixed;
+    top: 5vh;
+    left: 5vw;
+}
+
+.error{
+    position: absolute;
+    top: 47.5%;
+    width: 99%;
+    color: red;
+    background-color: transparent;
+	text-shadow: 0px 1px 0px #855, 0px 2px 0px #844, 0px 3px 0px #833, 0px 4px 0px #822, 0px 5px 0px #811, 0px 6px 0px #800, 0px 7px 0px #333, 0px 8px 7px #001135;
+    margin: 0 auto;
+    font-size: 6vw;
+    text-align: center;
 }
 
 @keyframes glow{

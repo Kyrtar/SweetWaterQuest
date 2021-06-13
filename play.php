@@ -1,9 +1,3 @@
-<?php
-    function save(){
-        
-    }
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,13 +13,34 @@
     <script src="./src/main.js" type="module"></script>
     <?php
         session_start();
+        echo('
+            <script>
+                localStorage.setItem("charName","'.$_SESSION['name'].'");
+                localStorage.setItem("charExp",'.$_SESSION['experience'].');
+                localStorage.setItem("charLevel",'.$_SESSION['level'].');
+                localStorage.setItem("items",'.$_SESSION['items'].');
+                localStorage.setItem("quantity",'.$_SESSION['quantity'].');
+            </script>'
+        );
+
         if(isset($_SESSION['email'])){
             echo("<div id='buttons'>");
                 echo('<a href="./logout.php"><button id="out"><span>Log out</span></button></a>');
-                echo('<a href="./control.php" target="_blank"><button id="control"><span>Panel de control</span></button></a>');
-                echo('<a href="./save.php" target="_blank"><button id="save"><span>Salvar progreso</span></button></a>');
+                echo('<a href="./control.php"><button id="control"><span>Panel de control</span></button></a>');
+                echo('<form action="save.php" method="POST" target=SaveGame>
+                        <input type="submit" id="save" value="Save Game">
+                        <input type="hidden" id="exp" name="exp" value="">
+                        <input type="hidden" id="level" name="level" value="1">
+                        <input type="hidden" id="potions" name="potions" value="0">
+                      </form>');
+                echo('<iframe name="SaveGame"></iframe>');
             echo("</div id='buttons'>");
         }
     ?>
+    <script>
+        if (localStorage.getItem("charName") === null) {
+            location.reload();
+        }
+    </script>
 </body>
 </html>

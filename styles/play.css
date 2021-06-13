@@ -8,11 +8,15 @@ img{
     display: none;
 }
 
-button{
+button, input{
     width: 100px;
     height: 60px;
     padding: 5% 10%;
     font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', 'Geneva', 'Verdana', 'sans-serif';
+}
+
+iframe{
+    display: none;
 }
 
 #buttons{
